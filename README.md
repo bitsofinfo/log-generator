@@ -8,7 +8,8 @@ useful for generating sample time-series based data to feed other downstream sys
 ```
 logGenerator.py --logFile <targetFile>
     [--minSleepMs <int>] [--maxSleepMs <int>]
-    [--sourceDataFile <fileWithTextData>] [--iterations <long>] [--minLines <int>] [--maxLines <int>]
+    [--sourceDataFile <fileWithTextData>] [--iterations <long>]
+    [--minLines <int>] [--maxLines <int>]
     [--logPattern <pattern>] [--datePattern <pattern>]
 ```
 
