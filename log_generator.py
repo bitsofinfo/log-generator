@@ -39,10 +39,10 @@ def main(argv):
             logFile = arg
 
         elif opt in ("--minSleepMs"):
-            minSleep = (1000 / int(arg))
+            minSleep = (0.001 * float(arg))
 
         elif opt in ("--maxSleepMs"):
-            maxSleep = (1000 / int(arg))
+            maxSleep = (0.001 * float(arg))
 
         elif opt in ("--maxLines"):
             maxLines = int(arg)
@@ -72,6 +72,9 @@ def main(argv):
     print "minLines: " + str(minLines)
     print "maxLines: " + str(maxLines)
 
+
+    logging.basicConfig(format='%(asctime)s %(process)d %(filename)s %(lineno)d %(name)s %(levelname)s %(message)s',filename=logFile,level=logging.DEBUG)
+
     mustIterate = True
     while (mustIterate):
 
@@ -80,12 +83,7 @@ def main(argv):
 
         # get random data
         lineToStart = random.randint(0,totalLines)
-        linesToGet = -1
-        while(linesToGet < lineToStart):
-            linesToGet = random.randint(minLines, maxLines)
-
-        print str(lineToStart)
-        print str(linesToGet)
+        linesToGet = random.randint(minLines, maxLines)
 
         lastLineToGet = (lineToStart + linesToGet)
 
@@ -94,7 +92,12 @@ def main(argv):
 
         toLog = ''.join(sourceData[lineToStart:lastLineToGet])
 
-        logging.basicConfig(format='%(asctime)s %(message)s',filename=logFile,level=logging.DEBUG)
+        if (toLog.startswith('\n')):
+            toLog = toLog[1:]
+
+        if (toLog == ''):
+            continue
+
         logging.debug(toLog[:-1])
 
         if (iterations > 0):
@@ -102,6 +105,8 @@ def main(argv):
             if (iterations == 0):
                 mustIterate = False
 
+
+    sys.exit(0)
 
 if __name__ == "__main__":
    main(sys.argv[1:])
