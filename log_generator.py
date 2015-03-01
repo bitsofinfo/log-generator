@@ -1,5 +1,14 @@
 #!/usr/bin/env python
 
+#################################
+# log-generator
+#
+# - small python script to generate random time series data into files
+# - https://github.com/bitsofinfo/log-generator
+# - uses GMT time
+#
+#################################
+
 import logging
 import getopt
 import sys
@@ -7,9 +16,9 @@ import time
 import random
 
 def main(argv):
-    usageInfo = '\nUSAGE:\n\nlogGenerator.py --logFile <targetFile> [--minSleepMs <int>] [--maxSleepMs <int>] [--sourceDataFile <fileWithTextData>] [--iterations <long>]] [--minLines <int>] [--maxLines <int>]\n'
+    usageInfo = '\nUSAGE:\n\nlogGenerator.py --logFile <targetFile>\n\t[--minSleepMs <int>] [--maxSleepMs <int>] \n\t[--sourceDataFile <fileWithTextData>] [--iterations <long>] [--minLines <int>] [--maxLines <int>] \n\t[--logPattern <pattern>] [--datePattern <pattern>]'
 
-    interations = -1
+    iterations = -1 # infinate
     minSleep = 0.1
     maxSleep = 1
     minLines = 1
@@ -17,6 +26,8 @@ def main(argv):
     logFile = 'logGenerator.log'
     sourceDataFile = 'defaultDataFile.txt'
     sourceData = ''
+    logPattern = '%(asctime)s,%(msecs)d %(process)d %(filename)s %(lineno)d %(name)s %(levelname)s %(message)s'
+    datePattern = "%Y-%m-%d %H:%M:%S"
 
     if len(argv) == 0:
         print usageInfo
@@ -56,6 +67,11 @@ def main(argv):
         elif opt in ("--iterations"):
             iterations = int(arg)
 
+        elif opt in ("--logPattern"):
+            logPattern = arg
+
+        elif opt in ("--datePattern"):
+            datePattern = arg
 
     # bring in source data
     with open (sourceDataFile, "r") as fh:
@@ -66,14 +82,28 @@ def main(argv):
     if (maxLines > totalLines):
         maxLines = totalLines
 
+    print "######################################"
+    print "### log-generator running with....."
+    print "######################################"
+    print "sourceDataFile: " + sourceDataFile
+    print "logPattern: " + logPattern
+    print "datePattern: " + datePattern
     print "sourceData lines: " + str(totalLines)
     print "minSleep: " + str(minSleep)
     print "maxSleep: " + str(maxSleep)
     print "minLines: " + str(minLines)
     print "maxLines: " + str(maxLines)
+    print "######################################"
 
-
-    logging.basicConfig(format='%(asctime)s %(process)d %(filename)s %(lineno)d %(name)s %(levelname)s %(message)s',filename=logFile,level=logging.DEBUG)
+    # setup logging
+    logging.Formatter.converter = time.gmtime
+    logger = logging.getLogger("log-generator")
+    logger.setLevel(logging.DEBUG)
+    fileHandler = logging.FileHandler(logFile)
+    fileHandler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter(logPattern,datePattern)
+    fileHandler.setFormatter(formatter)
+    logger.addHandler(fileHandler)
 
     mustIterate = True
     while (mustIterate):
@@ -98,7 +128,7 @@ def main(argv):
         if (toLog == ''):
             continue
 
-        logging.debug(toLog[:-1])
+        logger.debug(toLog[:-1])
 
         if (iterations > 0):
             iterations = iterations - 1
