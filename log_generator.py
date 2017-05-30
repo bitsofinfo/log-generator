@@ -30,20 +30,20 @@ def main(argv):
     datePattern = "%Y-%m-%d %H:%M:%S"
 
     if len(argv) == 0:
-        print usageInfo
+        print(usageInfo)
         sys.exit(2)
 
     try:
         opts, args = getopt.getopt(argv,"h",["help","logFile=","minSleepMs=","maxSleepMs=","iterations=","sourceDataFile=","minLines=","maxLines="])
     except:
-        print usageInfo
+        print(usageInfo)
         sys.exit(2)
 
 
     for opt, arg in opts:
 
         if opt in ('-h' , "--help"):
-            print usageInfo
+            print(usageInfo)
             sys.exit()
 
         elif opt in ("--logFile"):
@@ -82,18 +82,18 @@ def main(argv):
     if (maxLines > totalLines):
         maxLines = totalLines
 
-    print "######################################"
-    print "### log-generator running with....."
-    print "######################################"
-    print "sourceDataFile: " + sourceDataFile
-    print "logPattern: " + logPattern
-    print "datePattern: " + datePattern
-    print "sourceData lines: " + str(totalLines)
-    print "minSleep: " + str(minSleep)
-    print "maxSleep: " + str(maxSleep)
-    print "minLines: " + str(minLines)
-    print "maxLines: " + str(maxLines)
-    print "######################################"
+    print("######################################")
+    print("### log-generator running with.....")
+    print("######################################")
+    print("sourceDataFile: " + sourceDataFile)
+    print("logPattern: " + logPattern)
+    print("datePattern: " + datePattern)
+    print("sourceData lines: " + str(totalLines))
+    print("minSleep: " + str(minSleep))
+    print("maxSleep: " + str(maxSleep))
+    print("minLines: " + str(minLines))
+    print("maxLines: " + str(maxLines))
+    print("######################################")
 
     # setup logging
     logging.Formatter.converter = time.gmtime
